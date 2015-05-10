@@ -13,7 +13,8 @@ class CZDatePickerTableViewController: UITableViewController {
     var selectedRowIndex:NSIndexPath? = nil
     var datePicked:String = "not yet"
     let dateFormatter:NSDateFormatter = NSDateFormatter()
- 
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -37,7 +38,7 @@ class CZDatePickerTableViewController: UITableViewController {
 
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell:CZDatePickerTableViewCell = tableView.dequeueReusableCellWithIdentifier("CalendarPicker", forIndexPath: indexPath) as! CZDatePickerTableViewCell
+        let cell:CZDatePickerTableViewCell = tableView.dequeueReusableCellWithIdentifier("selectDate", forIndexPath: indexPath) as! CZDatePickerTableViewCell
 
         cell.TitleLabel.text = "test"
         
@@ -57,22 +58,22 @@ class CZDatePickerTableViewController: UITableViewController {
             
             selectedRowIndex = indexPath
             
-            cell.TitleLabel.text = "123123123"
+            cell.TitleLabel.text = "select date"
             
-            let doneBtn:UIButton = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+            let doneBtn:UIButton = UIButton(frame: CGRectMake(200, 300, 200, 100))
+         
             
             doneBtn.setTitle("Done", forState: UIControlState.Normal)
             doneBtn.setTitleColor(UIColor.blueColor(), forState: UIControlState.Normal)
             doneBtn.tag = indexPath.row
             doneBtn.addTarget(self, action: "doneBtnClicked:", forControlEvents: UIControlEvents.TouchUpInside)
-        
             cell.addSubview(doneBtn)
             
-            let datepicker:UIDatePicker = UIDatePicker()
+            let datepicker:UIDatePicker = UIDatePicker(frame: CGRectMake(50, 100, 400, 200))
             datepicker.datePickerMode = UIDatePickerMode.Time
             datepicker.tag = indexPath.row
             datepicker.addTarget(self, action: "timepickerChanged:", forControlEvents: UIControlEvents.ValueChanged)
-            
+            datePicked = dateFormatter.stringFromDate(datepicker.date)
             cell.addSubview(datepicker)
 
             
@@ -134,7 +135,13 @@ extension CZDatePickerTableViewController {
     
     func doneBtnClicked(sender:UIButton!) {
         
+        let indexPath:NSIndexPath = NSIndexPath(forRow: sender.tag, inSection: 0)
         
+        let cell:CZDatePickerTableViewCell = tableView.cellForRowAtIndexPath(indexPath)as! CZDatePickerTableViewCell
+      
+        self.tableView.delegate?.tableView!(self.tableView, didSelectRowAtIndexPath: indexPath)
+        
+        cell.TitleLabel.text = datePicked
         
         
     }
@@ -153,9 +160,6 @@ extension CZDatePickerTableViewController {
         cell.TitleLabel.text = datePicked
         
     }
-    
-    
-    
     
 }
 
