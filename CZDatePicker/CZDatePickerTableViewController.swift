@@ -46,10 +46,16 @@ class CZDatePickerTableViewController: UITableViewController {
 
         if cellIdentifier[indexPath.row] as! String == "selectDate" {
             cell.SetDateLabel.text = "select date"
-            
         }else{
             cell.SetTimeLabel.text = "select time"
         }
+        
+        
+        
+        
+ 
+        
+        
 
         
         return cell
@@ -59,6 +65,17 @@ class CZDatePickerTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 
         let cell:CZDatePickerTableViewCell = tableView.cellForRowAtIndexPath(indexPath)as! CZDatePickerTableViewCell
+        
+        
+        if (selectedRowIndex != nil) {
+            let celltoClean:CZDatePickerTableViewCell = tableView.cellForRowAtIndexPath(selectedRowIndex!)as! CZDatePickerTableViewCell
+            for subview in celltoClean.subviews {
+                if subview.isKindOfClass(UIButton) || subview.isKindOfClass(UIDatePicker){
+                    subview.removeFromSuperview()
+                }
+            }
+        }
+        
         
         
         if selectedRowIndex != indexPath {
@@ -72,16 +89,19 @@ class CZDatePickerTableViewController: UITableViewController {
             }
 
             
-            
+            // subpickercell UI
+        
             let doneBtn:UIButton = UIButton(frame: CGRectMake(200, 300, 200, 100))
             doneBtn.setTitle("Done", forState: UIControlState.Normal)
             doneBtn.setTitleColor(UIColor.blueColor(), forState: UIControlState.Normal)
             doneBtn.tag = indexPath.row
+            doneBtn.alpha = 0
             doneBtn.addTarget(self, action: "doneBtnClicked:", forControlEvents: UIControlEvents.TouchUpInside)
             cell.addSubview(doneBtn)
             
-            let datepicker:UIDatePicker = UIDatePicker(frame: CGRectMake(50, 100, 400, 200))
+            let datepicker:UIDatePicker = UIDatePicker(frame: CGRectMake(0, 100, 400, 200))
             datepicker.tag = indexPath.row
+            datepicker.alpha = 0
             datepicker.addTarget(self, action: "timepickerChanged:", forControlEvents: UIControlEvents.ValueChanged)
          
             if cellIdentifier[indexPath.row] as! String == "selectDate" {
@@ -89,6 +109,14 @@ class CZDatePickerTableViewController: UITableViewController {
             }else{
                 datepicker.datePickerMode = UIDatePickerMode.Time
             }
+            
+            UIView.animateWithDuration(1.0, animations: { () -> Void in
+                datepicker.alpha = 1.0
+                doneBtn.alpha = 1.0
+            })
+            
+            
+            
             
             cell.addSubview(datepicker)
             
@@ -122,10 +150,11 @@ class CZDatePickerTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
+        
+        println(indexPath.row)
         if (selectedRowIndex != nil)&&(selectedRowIndex!.row == indexPath.row ) {
             return 400
         }
-        
         
         
         return 100
