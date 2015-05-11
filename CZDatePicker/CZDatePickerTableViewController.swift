@@ -117,7 +117,6 @@ class CZDatePickerTableViewController: UITableViewController {
             
             
             
-            
             cell.addSubview(datepicker)
             
         }else{
@@ -150,8 +149,6 @@ class CZDatePickerTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
-        
-        println(indexPath.row)
         if (selectedRowIndex != nil)&&(selectedRowIndex!.row == indexPath.row ) {
             return 400
         }
