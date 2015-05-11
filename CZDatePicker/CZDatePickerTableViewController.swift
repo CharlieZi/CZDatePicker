@@ -11,12 +11,15 @@ import UIKit
 class CZDatePickerTableViewController: UITableViewController {
 
     var selectedRowIndex:NSIndexPath? = nil
-    var datePicked:String = "not yet"
+    var datePicked:NSDate = NSDate()
     let dateFormatter:NSDateFormatter = NSDateFormatter()
+    
+    let cellIdentifier:NSArray = ["selectDate","selectTime"]
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
 
     }
 
@@ -33,14 +36,21 @@ class CZDatePickerTableViewController: UITableViewController {
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
        
-        return 3
+        return cellIdentifier.count
     }
 
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell:CZDatePickerTableViewCell = tableView.dequeueReusableCellWithIdentifier("selectDate", forIndexPath: indexPath) as! CZDatePickerTableViewCell
+        
+        let cell:CZDatePickerTableViewCell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier[indexPath.row] as! String, forIndexPath: indexPath) as! CZDatePickerTableViewCell
 
-        cell.TitleLabel.text = "test"
+        if cellIdentifier[indexPath.row] as! String == "selectDate" {
+            cell.SetDateLabel.text = "select date"
+            
+        }else{
+            cell.SetTimeLabel.text = "select time"
+        }
+
         
         return cell
     }
@@ -51,18 +61,19 @@ class CZDatePickerTableViewController: UITableViewController {
         let cell:CZDatePickerTableViewCell = tableView.cellForRowAtIndexPath(indexPath)as! CZDatePickerTableViewCell
         
         
-        
-//
-        
         if selectedRowIndex != indexPath {
             
             selectedRowIndex = indexPath
+            if cellIdentifier[indexPath.row] as! String == "selectDate" {
+                cell.SetDateLabel.text = "select date"
+                
+            }else{
+                cell.SetTimeLabel.text = "select time"
+            }
+
             
-            cell.TitleLabel.text = "select date"
             
             let doneBtn:UIButton = UIButton(frame: CGRectMake(200, 300, 200, 100))
-         
-            
             doneBtn.setTitle("Done", forState: UIControlState.Normal)
             doneBtn.setTitleColor(UIColor.blueColor(), forState: UIControlState.Normal)
             doneBtn.tag = indexPath.row
@@ -70,12 +81,16 @@ class CZDatePickerTableViewController: UITableViewController {
             cell.addSubview(doneBtn)
             
             let datepicker:UIDatePicker = UIDatePicker(frame: CGRectMake(50, 100, 400, 200))
-            datepicker.datePickerMode = UIDatePickerMode.Time
             datepicker.tag = indexPath.row
             datepicker.addTarget(self, action: "timepickerChanged:", forControlEvents: UIControlEvents.ValueChanged)
-            datePicked = dateFormatter.stringFromDate(datepicker.date)
+         
+            if cellIdentifier[indexPath.row] as! String == "selectDate" {
+                datepicker.datePickerMode = UIDatePickerMode.Date
+            }else{
+                datepicker.datePickerMode = UIDatePickerMode.Time
+            }
+            
             cell.addSubview(datepicker)
-
             
         }else{
             
@@ -89,13 +104,9 @@ class CZDatePickerTableViewController: UITableViewController {
 
             }
             
-            cell.TitleLabel.text = datePicked
+            CellReuseLabeldefiner(cell, identifierArray: cellIdentifier, indexPath: indexPath, date: datePicked)
             
             selectedRowIndex = nil
-            
-            
-            
-
             
             
         }
@@ -104,8 +115,6 @@ class CZDatePickerTableViewController: UITableViewController {
         self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
         self.tableView.beginUpdates()
         self.tableView.endUpdates()
-        
-       
         
         
     }
@@ -117,15 +126,12 @@ class CZDatePickerTableViewController: UITableViewController {
             return 400
         }
         
+        
+        
         return 100
         
         
     }
-    
-   
-    
-    
-    
 
 }
 
@@ -141,23 +147,20 @@ extension CZDatePickerTableViewController {
       
         self.tableView.delegate?.tableView!(self.tableView, didSelectRowAtIndexPath: indexPath)
         
-        cell.TitleLabel.text = datePicked
+        CellReuseLabeldefiner(cell, identifierArray: cellIdentifier, indexPath: indexPath, date: datePicked)
         
         
     }
     
     func timepickerChanged(sender:UIDatePicker) {
         
-        
-        dateFormatter.dateFormat = "MM-dd hh:mm"
-        
-        datePicked = dateFormatter.stringFromDate(sender.date)
+        datePicked = sender.date
         
         let indexPath:NSIndexPath = NSIndexPath(forRow: sender.tag, inSection: 0)
         
         let cell:CZDatePickerTableViewCell = tableView.cellForRowAtIndexPath(indexPath)as! CZDatePickerTableViewCell
-        
-        cell.TitleLabel.text = datePicked
+      
+        CellReuseLabeldefiner(cell, identifierArray: cellIdentifier, indexPath: indexPath, date: datePicked)
         
     }
     
@@ -167,7 +170,23 @@ extension CZDatePickerTableViewController {
 
 
 
-
+extension CZDatePickerTableViewController {
+    
+    
+    func CellReuseLabeldefiner(cell:CZDatePickerTableViewCell,identifierArray:NSArray,indexPath:NSIndexPath,date:NSDate) -> Void {
+        
+        if identifierArray[indexPath.row] as! String == identifierArray.firstObject as! String {
+            
+            dateFormatter.dateFormat = "MM-dd"
+            cell.SetDateLabel.text = dateFormatter.stringFromDate(date)
+        }else{
+            dateFormatter.dateFormat = "hh:mm"
+            cell.SetTimeLabel.text = dateFormatter.stringFromDate(date)
+        }
+        
+    }
+    
+}
 
 
 
