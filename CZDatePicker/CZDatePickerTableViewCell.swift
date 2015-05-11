@@ -10,7 +10,8 @@ import UIKit
 
 class CZDatePickerTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var TitleLabel: UILabel!
+    @IBOutlet weak var SetDateLabel: UILabel!
+    @IBOutlet weak var SetTimeLabel: UILabel!
     
     
     override func awakeFromNib() {
