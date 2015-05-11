@@ -117,7 +117,6 @@ class CZDatePickerTableViewController: UITableViewController {
             
             
             
-            
             cell.addSubview(datepicker)
             
         }else{
