@@ -13,9 +13,7 @@ class CZDatePickerTableViewController: UITableViewController {
     var selectedRowIndex:NSIndexPath? = nil
     var datePicked:NSDate = NSDate()
     let dateFormatter:NSDateFormatter = NSDateFormatter()
-    
     let cellIdentifier:NSArray = ["selectDate","selectTime"]
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +25,6 @@ class CZDatePickerTableViewController: UITableViewController {
         super.didReceiveMemoryWarning()
     
     }
-
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         
@@ -38,7 +35,6 @@ class CZDatePickerTableViewController: UITableViewController {
        
         return cellIdentifier.count
     }
-
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
@@ -52,15 +48,8 @@ class CZDatePickerTableViewController: UITableViewController {
         
         
         
-        
- 
-        
-        
-
-        
         return cell
     }
-    
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 
@@ -74,9 +63,7 @@ class CZDatePickerTableViewController: UITableViewController {
                     subview.removeFromSuperview()
                 }
             }
-        }
-        
-        
+        } // remove subview of deselected row
         
         if selectedRowIndex != indexPath {
             
@@ -88,9 +75,8 @@ class CZDatePickerTableViewController: UITableViewController {
                 cell.SetTimeLabel.text = "select time"
             }
 
-            
             // subpickercell UI
-        
+            //button Done
             let doneBtn:UIButton = UIButton(frame: CGRectMake(200, 300, 200, 100))
             doneBtn.setTitle("Done", forState: UIControlState.Normal)
             doneBtn.setTitleColor(UIColor.blueColor(), forState: UIControlState.Normal)
@@ -98,25 +84,30 @@ class CZDatePickerTableViewController: UITableViewController {
             doneBtn.alpha = 0
             doneBtn.addTarget(self, action: "doneBtnClicked:", forControlEvents: UIControlEvents.TouchUpInside)
             cell.addSubview(doneBtn)
-            
+            //button cancel
+            let cancelBtn:UIButton = UIButton(frame: CGRectMake(0, 300, 200, 100))
+            cancelBtn.setTitle("Cancel", forState: UIControlState.Normal)
+            cancelBtn.setTitleColor(UIColor.blueColor(), forState: UIControlState.Normal)
+            cancelBtn.tag = indexPath.row
+            cancelBtn.alpha = 0
+            cancelBtn.addTarget(self, action: "cancelBtnClicked:", forControlEvents: UIControlEvents.TouchUpInside)
+            cell.addSubview(cancelBtn)
+            //datepicker
             let datepicker:UIDatePicker = UIDatePicker(frame: CGRectMake(0, 100, 400, 200))
             datepicker.tag = indexPath.row
             datepicker.alpha = 0
             datepicker.addTarget(self, action: "timepickerChanged:", forControlEvents: UIControlEvents.ValueChanged)
-         
             if cellIdentifier[indexPath.row] as! String == "selectDate" {
                 datepicker.datePickerMode = UIDatePickerMode.Date
             }else{
                 datepicker.datePickerMode = UIDatePickerMode.Time
             }
-            
+            // animation
             UIView.animateWithDuration(1.0, animations: { () -> Void in
                 datepicker.alpha = 1.0
                 doneBtn.alpha = 1.0
+                cancelBtn.alpha = 1.0
             })
-            
-            
-            
             cell.addSubview(datepicker)
             
         }else{
@@ -138,14 +129,11 @@ class CZDatePickerTableViewController: UITableViewController {
             
         }
         
-        
         self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
         self.tableView.beginUpdates()
         self.tableView.endUpdates()
         
-        
     }
-    
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
@@ -175,7 +163,16 @@ extension CZDatePickerTableViewController {
         
         CellReuseLabeldefiner(cell, identifierArray: cellIdentifier, indexPath: indexPath, date: datePicked)
         
+    }
+    
+    func cancelBtnClicked(sender:UIButton) {
         
+        let indexPath:NSIndexPath = NSIndexPath(forRow: sender.tag, inSection: 0)
+        
+        let cell:CZDatePickerTableViewCell = tableView.cellForRowAtIndexPath(indexPath)as! CZDatePickerTableViewCell
+        
+        self.tableView.delegate?.tableView!(self.tableView, didSelectRowAtIndexPath: indexPath)
+
     }
     
     func timepickerChanged(sender:UIDatePicker) {
@@ -191,10 +188,6 @@ extension CZDatePickerTableViewController {
     }
     
 }
-
-
-
-
 
 extension CZDatePickerTableViewController {
     
